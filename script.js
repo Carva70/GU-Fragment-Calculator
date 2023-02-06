@@ -396,7 +396,8 @@ function searchCard() {
         var tableBody = "";
 
         if (data.records == null) {
-            
+            table.innerHTML = ""
+            return
         }
 
         var tableBody = "<tr>";
