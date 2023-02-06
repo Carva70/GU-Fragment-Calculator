@@ -391,9 +391,13 @@ function searchCard() {
     fetch("https://api.godsunchained.com/v0/proto" + apiQuery)
       .then(response => response.json())
       .then(data => {
-        if (data.records == null) return
+        
         var table = document.getElementById("tableQuery");
         var tableBody = "";
+
+        if (data.records == null) {
+            
+        }
 
         var tableBody = "<tr>";
         tableBody += "<th>ID</th>";
