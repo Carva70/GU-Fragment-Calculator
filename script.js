@@ -251,14 +251,10 @@ function calculateFragments() {
 
 }
 
-function clear() {
-    document.getElementById("fragmentTable").innerHTML = ""
-    document.getElementById("searchDiv").innerHTML = ""
-}
-
 function displaySearch(divId) {
     var parentDiv = document.getElementById(divId)
     var wrapperDiv = document.createElement("div")
+    wrapperDiv.id = "wrapperDiv"
 
     var columnGrid = document.createElement("div")
     var godList = ["light", "death", "nature", "war", "magic", "deception"]
@@ -279,6 +275,7 @@ function displaySearch(divId) {
     titleColumn.innerHTML = "Select God"
     columnGrid.appendChild(titleColumn)
     columnGrid.appendChild(godTypeSelect)
+    columnGrid.classList.add("wrapperElement")
     wrapperDiv.appendChild(columnGrid)
 
 
@@ -301,6 +298,7 @@ function displaySearch(divId) {
     titleColumn.innerHTML = "Select Rarity"
     columnGrid.appendChild(titleColumn)
     columnGrid.appendChild(rarityTypeSelect)
+    columnGrid.classList.add("wrapperElement")
     wrapperDiv.appendChild(columnGrid)
     
     
@@ -323,6 +321,7 @@ function displaySearch(divId) {
     titleColumn.innerHTML = "Select Type"
     columnGrid.appendChild(titleColumn)
     columnGrid.appendChild(typeSelect)
+    columnGrid.classList.add("wrapperElement")
     wrapperDiv.appendChild(columnGrid)
 
     var columnGrid = document.createElement("div")
@@ -344,6 +343,7 @@ function displaySearch(divId) {
     titleColumn.innerHTML = "Select Tribe"
     columnGrid.appendChild(titleColumn)
     columnGrid.appendChild(tribeTypeSelect)
+    columnGrid.classList.add("wrapperElement")
     wrapperDiv.appendChild(columnGrid)
 
     
@@ -366,6 +366,7 @@ function displaySearch(divId) {
     titleColumn.innerHTML = "Select Mana Cost"
     columnGrid.appendChild(titleColumn)
     columnGrid.appendChild(manaTypeSelect)
+    columnGrid.classList.add("wrapperElement")
     wrapperDiv.appendChild(columnGrid)
     
     var tableQuery = document.createElement("table")
@@ -376,6 +377,7 @@ function displaySearch(divId) {
     
     parentDiv.appendChild(wrapperDiv)
     parentDiv.appendChild(tableQuery)
+    searchCard()
 }
 
 function searchCard() {
@@ -385,8 +387,10 @@ function searchCard() {
     var tribeType = document.getElementById("tribeTypeSelect").value;
     var mana = document.getElementById("manaSelect").value;
   
-    var apiQuery = "?god=" + godType + "&rarity=" + rarityType + "&type=" + type + "&tribe=" + tribeType;
+    var apiQuery = "?god=" + godType + "&rarity=" + rarityType + "&type=" + type + "&tribe=" + tribeType + "&perPage=10000";
     if (mana != "") apiQuery += "&mana=" + mana
+
+    document.getElementById("tableQuery").innerHTML = "<div class=\"loader\"></div>"
   
     fetch("https://api.godsunchained.com/v0/proto" + apiQuery)
       .then(response => response.json())
@@ -396,7 +400,7 @@ function searchCard() {
         var tableBody = "";
 
         if (data.records == null) {
-            table.innerHTML = ""
+            table.innerHTML = "No results :("
             return
         }
 
@@ -406,20 +410,29 @@ function searchCard() {
         tableBody += "<th>Effect</th>";
         tableBody += "<th>God</th>";
         tableBody += "<th>Rarity</th>";
+        tableBody += "<th>Tribe</th>";
         tableBody += "<th>Type</th>";
         tableBody += "<th>Mana</th>";
+        tableBody += "<th>Attack</th>";
+        tableBody += "<th>Health</th>";
         tableBody += "</tr>";
 
          
         data.records.forEach(function(card) {
+            var tribCard = card.tribe["Valid"] == true ? card.tribe["String"] : ""
+            var attCard = card.attack["Valid"] == true ? card.attack["Int64"] : ""
+            var hthCard = card.health["Valid"] == true ? card.health["Int64"] : ""
             tableBody += "<tr>";
             tableBody += "<td>" + card.id + "</td>";
             tableBody += "<td>" + card.name + "</td>";
             tableBody += "<td>" + card.effect + "</td>";
             tableBody += "<td>" + card.god + "</td>";
             tableBody += "<td>" + card.rarity + "</td>";
+            tableBody += "<td>" + tribCard + "</td>";
             tableBody += "<td>" + card.type + "</td>";
             tableBody += "<td>" + card.mana + "</td>";
+            tableBody += "<td>" + attCard + "</td>";
+            tableBody += "<td>" + hthCard + "</td>";
             tableBody += "</tr>";
         });
   
@@ -428,8 +441,99 @@ function searchCard() {
       .catch(error => {
         console.error(error);
       });
-  }
-  
+}
+
+
+function clear() {
+    document.getElementById("fragmentTable").innerHTML = ""
+    document.getElementById("searchDiv").innerHTML = ""
+    document.getElementById("payBackDiv").innerHTML = ""
+}
+
+function displayPayBack(divId) {
+    var parentDiv = document.getElementById(divId)
+    var table = document.createElement("table")
+    var explainText = document.createElement("p")
+    explainText.innerHTML = "Estimated amount of time it takes for a player to earn back the cost of a specific card."
+    parentDiv.appendChild(explainText)
+    table.id = "tablePayback"
+    var tableBody = document.createElement("tbody")
+
+    var titleRow = document.createElement("tr")
+    var titleList = ["", "USD", "GODS", "Efficient (3W/day)", "Average (5W/day)", "Perfect (10W/day)"]
+    var cardType = ["Shadow", "Gold", "Diamond"]
+    var mode = ["efficient", "average", "perfect"]
+    var initialValueNumbers = [0.27, 1.65, 8.5]
+
+    for (var i in titleList) {
+        var titleElement = document.createElement("th")
+        titleElement.innerHTML = titleList[i]
+        titleRow.appendChild(titleElement)
+    }
+    tableBody.appendChild(titleRow)
+
+    for (i in cardType) {
+        var tableRow = document.createElement("tr")
+        var tableElement = document.createElement("td")
+        tableElement.innerHTML = cardType[i]
+        tableRow.appendChild(tableElement)
+
+        tableElement = document.createElement("td")
+        var cardValueUSD = document.createElement("input")
+        cardValueUSD.type = "number"
+        cardValueUSD.value = initialValueNumbers[i]
+        cardValueUSD.id = "cardValueUSD" + i
+        cardValueUSD.addEventListener("change", calculatePayBack)
+        tableElement.appendChild(cardValueUSD)
+        tableRow.appendChild(tableElement)
+
+        tableElement = document.createElement("td")
+        var cardValueGODS = document.createElement("div")
+        cardValueGODS.id = "cardValueGODS" + i
+        tableElement.appendChild(cardValueGODS)
+        tableRow.appendChild(tableElement)
+
+        for (var j in mode) {
+            tableElement = document.createElement("td")
+            var elementDiv = document.createElement("div")
+            elementDiv.id = mode[j] + cardType[i]
+            tableElement.appendChild(elementDiv)
+            tableRow.appendChild(tableElement)
+        }
+
+        tableBody.appendChild(tableRow)
+    }
+
+    table.appendChild(tableBody)
+    parentDiv.appendChild(table)
+    calculatePayBack()
+}
+
+function calculatePayBack() {
+    var cardType = ["Shadow", "Gold", "Diamond"]
+    var mode = ["efficient", "average", "perfect"]
+
+    var coefficients = [[0.0024, 0.0032,	0.0052],
+                       [0.0143,	0.019,	0.0309],
+                       [0.0736,	0.0981,	0.1594]]
+
+    fetch("https://api.coingecko.com/api/v3/simple/price?ids=gods-unchained&vs_currencies=USD&include_market_cap=false&include_24hr_vol=false&include_24hr_change=false&include_last_updated_at=false&precision=18")
+        .then(function(response){
+            return response.json();
+        })
+        .then(function(data){
+            var price = parseFloat(data["gods-unchained"]["usd"])
+            
+            for (var i in cardType) {
+                var godsValue = document.getElementById("cardValueUSD" + i).value / price
+                console.log(godsValue)
+                document.getElementById("cardValueGODS" + i).innerHTML = godsValue.toFixed(2)
+                for (var j in mode) {
+                    document.getElementById(mode[j] + cardType[i]).innerHTML = (godsValue / coefficients[i][j]).toFixed(3) + " days"
+                }
+            }
+    });
+}
 
 function main() {
     displayFragmentTable("fragmentTable")
@@ -444,6 +548,12 @@ function main() {
     searchButton.addEventListener("click", function() {
         clear()
         displaySearch("searchDiv")
+    })
+
+    var payBackPeriod = document.getElementById("payBackPeriod")
+    payBackPeriod.addEventListener("click", function() {
+        clear()
+        displayPayBack("payBackDiv")
     })
 }
 

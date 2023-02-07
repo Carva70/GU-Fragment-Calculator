@@ -74,8 +74,16 @@ h1{
 }
 
 .navMenu a:nth-child(2):hover ~ .dot {
-  -webkit-transform: translateX(190px);
-  transform: translateX(190px);
+  -webkit-transform: translateX(220px);
+  transform: translateX(220px);
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+  opacity: 1;
+}
+
+.navMenu a:nth-child(3):hover ~ .dot {
+  -webkit-transform: translateX(340px);
+  transform: translateX(340px);
   -webkit-transition: all 0.2s ease-in-out;
   transition: all 0.2s ease-in-out;
   opacity: 1;
@@ -103,9 +111,9 @@ select {
 
 table {
     margin-top: 100px;
-    margin-left: 20%;
-    left: 50%;
-    width: 60%;
+    margin-left: 400px;
+    left: 400px;
+    width: 1100px;
     border-collapse: collapse;
   }
   
@@ -137,6 +145,47 @@ table {
 }
 
 #tableQuery{
+  position: absolute;
   margin-left: 0%;
-  width: 80%;
+  margin-top: 0;
+  width: 1100px;
+}
+
+#wrapperDiv {
+  padding-left: 100px;
+  display: grid;
+  grid-template-rows: repeat(5, 1tr);
+  gap: 10px;
+}
+
+#wrapperElement {
+  gap: 10px;
+}
+
+#tablePayback{
+  position: absolute;
+  margin-left: 0%;
+  margin-top: 0;
+  width: 1100px;
+}
+
+.loader {
+  margin: auto;
+  border: 10px solid #ccc;
+  border-radius: 50%;
+  border-top: 10px solid #fddb3a;
+  width: 50px;
+  height: 50px;
+  animation: spinner 4s linear infinite;
+}
+
+@keyframes spinner {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+p {
+  margin-left: 400px;
+  margin-bottom: 10px;
+  margin-top: 20px;
 }
