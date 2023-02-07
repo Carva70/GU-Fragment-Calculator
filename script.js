@@ -555,6 +555,19 @@ function main() {
         clear()
         displayPayBack("payBackDiv")
     })
+
+    fetch("https://api.coingecko.com/api/v3/simple/price?ids=gods-unchained&vs_currencies=USD&include_market_cap=false&include_24hr_vol=false&include_24hr_change=false&include_last_updated_at=false&precision=18")
+        .then(function(response){
+            return response.json();
+        })
+        .then(function(data){
+            var currencies = data["gods-unchained"]
+            var price = document.getElementById("priceInfo")
+
+            price.innerHTML = "GODS: <b>$" + currencies["usd"].toFixed(6) + "</b>"
+            
+            
+    });
 }
 
 main()

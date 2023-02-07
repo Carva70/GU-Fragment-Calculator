@@ -12,6 +12,9 @@ body {
   background: #272727;
   font-family: "Montserrat", sans-serif;
   color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 input[type=number]{
@@ -27,13 +30,13 @@ input[type=number]{
 }
 
 h1{
-  margin-top: 10px;
+  margin-top: 20px;
   text-align: center;
 }
 
 .navMenu {
   position: absolute;
-  top: 10%;
+  top: 110px;
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
@@ -91,23 +94,7 @@ h1{
 
 
 
-button, select{
-    margin-left: 10px;
-    width: 200px;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    appearance: none;
-    background-color: rgba(255, 255, 255, 0.8);
-    color: #333;
-}
 
-select {
-    padding: 2px;
-    width: 140px;
-    margin-right: 10px;
-}
 
 table {
     margin-top: 100px;
@@ -188,4 +175,47 @@ p {
   margin-left: 400px;
   margin-bottom: 10px;
   margin-top: 20px;
+}
+
+footer {
+  margin-top: auto;
+}
+
+
+select, input[type="number"] {
+
+  background-color: transparent;
+  border: none;
+  padding: 0 1em 0 0;
+  margin: 0;
+  width: 100%;
+  font-family: inherit;
+  font-size: 15px;
+  cursor: inherit;
+  line-height: inherit;
+  z-index: 1;
+  outline: none;
+
+  display: grid;
+  grid-template-areas: "select";
+  align-items: center;
+  position: relative;
+  min-width: 15ch;
+  max-width: 30ch;
+  border: 1px solid var(--select-border);
+  border-radius: 0.25em;
+  padding: 0.25em 0.5em;
+  cursor: pointer;
+  line-height: 1.1;
+  background-color: #333;
+  color: #ccc;
+}
+
+#priceInfo {
+    position: absolute;
+    left: 450px;
+    top: 32px;
+    height: auto;
+    width: 100%;
+    color: #999;
 }
